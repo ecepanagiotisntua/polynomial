@@ -1,0 +1,2 @@
+language =  "c++"
+run =  "g++ -g3 -O0 main.cpp -o a.out"
