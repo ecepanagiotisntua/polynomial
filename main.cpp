@@ -70,10 +70,58 @@ double evaluate(double x){
   return result;
 }
 
-friend Polynomial operator+ (const Polynomial &p, const Polynomial &q);
-friend Polynomial operator* (const Polynomial &p, const Polynomial &q);
+friend Polynomial operator+ (const Polynomial &p, const Polynomial &q){
+  Polynomial c;
+  Term *a = p.first, *b = q.first;
+  if (a == nullptr && b == nullptr) return c;
+  if (a == nullptr){
+    return q;
+  }
+  if (b == nullptr){
+    return p;
+  }
+  do{
+    if (a->exponent == b->exponent){
+      c.addTerm(a->exponent, (a->coefficient)+(b->coefficient));
+      a = a->next;
+      b = b->next;
+    }else if(a->exponent > b->exponent){
+      c.addTerm(a->exponent, a->coefficient);
+      a = a->next;
+    }else {
+      c.addTerm(b->exponent, b->coefficient);
+      b = b->next;
+    }
 
-friend ostream & operator << (ostream &out, const Polynomial &p);
+  }while(a!=nullptr && b!=nullptr)
+  return c;
+}
+
+friend Polynomial operator* (const Polynomial &p, const Polynomial &q){
+ 
+}
+
+friend ostream & operator << (ostream &out, const Polynomial &p){
+  Term *a ;
+  if (a->coefficient > 0){
+     out<< a->coefficient<<"x^"<<a->exponent<<" ";
+     a =a->next;
+  }
+  if (a->coefficient < 0) {
+    out<<"- "<<a->coefficient<<"x^"<<a->exponent<<" ";
+  a =a->next;
+  }
+  
+  for(a = p.first; a!=nullptr; a=a->next){
+    if (a->coefficient == 0) continue;
+    if (a->coefficient > 0)
+    out << " "<<a->coefficient << "x^" <<a->exponent<< " ";
+    if (a->coefficient < 0)
+    out << " - "<<a->coefficient<<"x^"<<a->exponent<<" ";
+
+  }
+  return out;
+}
 
 };
 
