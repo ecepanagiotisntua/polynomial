@@ -8,13 +8,18 @@ class Polynomial {
 protected:
 
 class Term {
-protected:
+
 int exponent;
 int coefficient;
 Term *next;
 Term(int exp, int coeff, Term *n):
   exponent(exp), coefficient(coeff), next(n) {}
-friend class Polynomial;
+
+~Term() { delete next; }
+
+		friend class Polynomial;
+
+		friend ostream;
 
 };
 int size;
@@ -22,36 +27,33 @@ int size;
 Term *first;
 
 public:
-Polynomial():first->exponent(0), first->coefficient(0), first->next(nullptr) {}
+Polynomial(){
+  first=nullptr;
+  first->next=nullptr;
+} 
  
-Polynomial(const Polynomial &p): first->exponent(0), first->coefficient(0), first->next(nullptr){
-  
-      for (Term *p = p.first; p != nullptr; p = p->next)
-        addTerm(p->exponent, p->coefficient);
-    }
+Polynomial(const Polynomial &p){
+  Term *q = p.first;
+		first = nullptr;
+		while (q != nullptr) {
+			this->addTerm(q->exponent, q->coefficient);
+			q = q->next;
+		}
+}
 
 ~Polynomial(){
-  Term *p = first;
-  while (p != nullptr) {
-  Term *q = p;
-  p = p->next;
-  delete q;
-  }
+  delete first;
  }
 
 
 Polynomial & operator = (const Polynomial &p) {
-  Term *p = first;
-  while (p != nullptr) {
-  Term *q = p;
-  p = p->next;
-  delete q;
-  }
-  first->next= nullptr;
-  first->exponent = 0;
-  first->coefficient = 0;
-  for (Term *p = p.first; p != nullptr; p = p->next)
-        addTerm(p->exponent, p->coefficient);
+  delete first;
+  Term *q = p.first;
+	first = nullptr;
+	while (q != nullptr) {
+		this->addTerm(q->exponent, q->coefficient);
+		q = q->next;
+    }
   
   return *this;
 }
@@ -62,10 +64,10 @@ void addTerm(int expon, int coeff){
       else first = p;
 }
 double evaluate(double x){
-  int result = 0;
+  double result = 0;
   for ( Term *p = first; p != nullptr; p = p-> next){
-    int partial = (p->coefficient) * pow(x , exponent);
-    result = result + partial;
+    double part = (p->coefficient) * pow(x , exponent);
+    result = result + part;
   }
   return result;
 }
@@ -98,7 +100,19 @@ friend Polynomial operator+ (const Polynomial &p, const Polynomial &q){
 }
 
 friend Polynomial operator* (const Polynomial &p, const Polynomial &q){
- 
+ Polynomial poly;
+		Term *a = p.first;
+		Term *b = q.first;
+		while (a != nullptr) {
+			while (b != nullptr) {
+				poly.addTerm(a->exponent + b->exponent,
+					a->coefficient * b->coefficient);
+				b = b->next;
+			}
+			b = q.first;
+			a = a->next;
+		}
+		return poly;
 }
 
 friend ostream & operator << (ostream &out, const Polynomial &p){
