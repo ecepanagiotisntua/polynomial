@@ -66,7 +66,7 @@ void addTerm(int expon, int coeff){
 double evaluate(double x){
   double result = 0;
   for ( Term *p = first; p != nullptr; p = p-> next){
-    double part = (p->coefficient) * pow(x , exponent);
+    double part = (p->coefficient) * pow(x , p->exponent);
     result = result + part;
   }
   return result;
